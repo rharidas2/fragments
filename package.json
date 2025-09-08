@@ -11,5 +11,8 @@
     "url": "git+https://github.com/rharidas2/fragments.git"
   },
   "author": "Rohith Haridas",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
 }
