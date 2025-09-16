@@ -4,7 +4,7 @@
 require('dotenv').config();
 
 // Logger setup
-const logger = require('./logger'); // make sure you have logger.js in src/
+const logger = require('./logger'); // make sure logger.js exists in src/
 
 // Handle crashes
 process.on('uncaughtException', (err, origin) => {
