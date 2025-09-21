@@ -16,6 +16,6 @@ jobs:
           node-version: 'lts/*'
           cache: 'npm'
       - name: Install dependencies
-        run: cd fragments && npm ci
+        run: npm ci
       - name: Run ESLint
-        run: cd fragments && npm run lint
+        run: npm run lint
