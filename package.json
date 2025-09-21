@@ -3,13 +3,15 @@
   "private": true,
   "version": "0.0.1",
   "description": "Fragments back-end API",
-"scripts": {
-  "start": "node src/index.js",
-  "dev": "node --env-file=debug.env --watch ./src/index.js",
-  "debug": "node --env-file=debug.env --inspect=0.0.0.0:9229 --watch ./src/index.js"
-}
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --env-file=debug.env --watch ./src/index.js",
+    "debug": "node --env-file=debug.env --inspect=0.0.0.0:9229 --watch ./src/index.js",
+    "lint": "eslint . --ext .js,.mjs --ignore-pattern '*.json' --ignore-pattern '.vscode/*'"
 
-,
+  }
+  
+  ,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rharidas2/fragments.git"
