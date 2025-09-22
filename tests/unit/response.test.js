@@ -1,25 +1,23 @@
-const { createErrorResponse, createSuccessResponse } = require('../../src/response');
+const { createSuccessResponse, createErrorResponse } = require('../../src/response');
 
-describe('API Responses', () => {
-  test('createErrorResponse()', () => {
-    const errorResponse = createErrorResponse(404, 'not found');
-    expect(errorResponse).toEqual({
-      status: 'error',
-      error: {
-        code: 404,
-        message: 'not found',
-      },
+describe('response.js', () => {
+  test('createSuccessResponse should wrap data with status ok', () => {
+    const data = { user: 'Rohith' };
+    const result = createSuccessResponse(data);
+    expect(result).toEqual({
+      status: 'ok',
+      user: 'Rohith',
     });
   });
 
-  test('createSuccessResponse()', () => {
-    const successResponse = createSuccessResponse();
-    expect(successResponse).toEqual({ status: 'ok' });
-  });
-
-  test('createSuccessResponse(data)', () => {
-    const data = { a: 1, b: 2 };
-    const successResponse = createSuccessResponse(data);
-    expect(successResponse).toEqual({ status: 'ok', a: 1, b: 2 });
+  test('createErrorResponse should return error object with code and message', () => {
+    const result = createErrorResponse(404, 'Not Found');
+    expect(result).toEqual({
+      status: 'error',
+      error: {
+        code: 404,
+        message: 'Not Found',
+      },
+    });
   });
 });

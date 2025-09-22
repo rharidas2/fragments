@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../../src/app'); // make sure this is your Express app
+const app = require('../../src/app'); 
 const { version, author } = require('../../package.json');
 
 describe('/ health check', () => {

@@ -47,6 +47,10 @@ app.get('/', (req, res) => {
   });
 });
 
+
+const fragmentsRouter = require('./routes/fragments');
+app.use('/v1/fragments', fragmentsRouter);
+
 // Add 404 middleware to handle any requests for resources that can't be found
 app.use((req, res) => {
   res.status(404).json({

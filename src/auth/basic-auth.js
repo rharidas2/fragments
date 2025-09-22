@@ -1,18 +1,29 @@
+// src/auth/basic-auth.js
+
+const auth = require('http-auth');
 const passport = require('passport');
-const HttpAuth = require('http-auth');
-const HttpAuthPassport = require('http-auth-passport');
-const path = require('path');
+const authPassport = require('http-auth-passport');
+
 const logger = require('../logger');
 
-// Path to your .htpasswd file
-const htpasswdPath = path.join(__dirname, '../../tests/.htpasswd');
+// We expect HTPASSWD_FILE to be defined.
+if (!process.env.HTPASSWD_FILE) {
+  throw new Error('missing expected env var: HTPASSWD_FILE');
+}
 
-// Create Basic Auth backend
-const basic = HttpAuth.basic({
-  file: htpasswdPath,
-});
+// Log that we're using Basic Auth
+logger.info('Using HTTP Basic Auth for auth');
 
-module.exports.strategy = () => new HttpAuthPassport(basic);
+// Create the strategy
+const strategy = authPassport(
+  auth.basic({
+    file: process.env.HTPASSWD_FILE,
+  })
+);
 
-module.exports.authenticate = () =>
-  passport.authenticate('basic', { session: false });
+
+passport.use('http', strategy);
+
+module.exports.strategy = () => strategy;
+
+module.exports.authenticate = () => passport.authenticate('http', { session: false });
