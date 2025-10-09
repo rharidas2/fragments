@@ -1,11 +1,13 @@
 const express = require('express');
-const { authenticate } = require('../auth');
-const { createSuccessResponse } = require('../response');
 const router = express.Router();
+const { authenticate } = require('../auth');
+const logger = require('../logger'); 
 
-// GET /v1/fragments
-router.get('/', authenticate(), (req, res) => {
-  res.status(200).json(createSuccessResponse({ fragments: [] }));
-});
+// All fragment routes require authentication
+router.use(authenticate());
 
+// Import your API routes
+router.use('/', require('./api'));
+
+logger.debug('Fragment routes configured');
 module.exports = router;
