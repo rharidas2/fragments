@@ -10,7 +10,9 @@
     "lint": "eslint \"./src/**/*.js\" \"tests/**/*.js\"",
     "start": "node src/index.js",
     "dev": "node --env-file=debug.env --watch ./src/index.js",
-    "debug": "node --env-file=debug.env --inspect=0.0.0.0:9229 --watch ./src/index.js"
+    "debug": "node --env-file=debug.env --inspect=0.0.0.0:9229 --watch ./src/index.js",
+    "test:integration": "env $(cat tests/.env.test | xargs) hurl --test --glob \"tests/integration/**/*.hurl\""
+
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@eslint/js": "^9.35.0",
     "@eslint/json": "^0.13.2",
+    "@orangeopensource/hurl": "^6.1.4",
     "eslint": "^9.35.0",
     "globals": "^16.4.0",
     "jest": "^29.7.0",
@@ -36,6 +39,7 @@
     "helmet": "^8.1.0",
     "http-auth": "^4.2.1",
     "http-auth-passport": "^1.0.7",
+    "markdown-it": "^14.1.0",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
     "pino": "^9.9.4",
@@ -44,6 +48,3 @@
     "stoppable": "^1.1.0"
   }
 }
-
-
-

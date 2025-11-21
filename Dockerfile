@@ -1,39 +1,39 @@
-# Dockerfile for fragments node.js microservice
-# This Dockerfile defines how to build a Docker image for our fragments service
+# Multi-stage Dockerfile for fragments node.js microservice
+# Stage 1: Builder
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
 
-# Use node version that matches your local environment
-FROM node:18.13.0
+# Stage 2: Runtime  
+FROM node:18-alpine AS runtime
 
 # Metadata about the image
-LABEL maintainer="Rohit <your.email@example.com>"
+LABEL maintainer="Rohit <rharidas2@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
 # Environment variables
-# We default to use port 8080 in our service
 ENV PORT=8080
-
-# Reduce npm spam when installing within Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
 ENV NPM_CONFIG_LOGLEVEL=warn
-
-# Disable colour when run inside Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#color
 ENV NPM_CONFIG_COLOR=false
 
 # Use /app as our working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json files into the working dir (/app)
-COPY package.json package-lock.json ./
+# Copy node_modules from builder stage
+COPY --from=builder /app/node_modules ./node_modules
 
-# Install node dependencies defined in package-lock.json
-RUN npm install
-
-# Copy src to /app/src/
+# Copy source code
 COPY ./src ./src
+COPY package.json ./
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S fragments -u 1001
+USER fragments
 
 # We run our service on port 8080
 EXPOSE 8080
 
 # Start the container by running our server
-CMD npm start
+CMD ["npm", "start"]

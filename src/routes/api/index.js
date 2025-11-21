@@ -1,36 +1,32 @@
 const express = require('express');
-const contentType = require('content-type');
-const { Fragment } = require('../../model/fragment');
 const logger = require('../../logger');
 
 const router = express.Router();
 
 // Support sending various Content-Types on the body up to 5MB in size
-const rawBody = () =>
-  express.raw({
-    inflate: true,
-    limit: '5mb',
-    type: (req) => {
-      try {
-        const { type } = contentType.parse(req);
-        const supported = Fragment.isSupportedType(type);
-        logger.debug({ type, supported }, 'Raw body parser type check');
-        return supported;
-      } catch (err) {
-        logger.debug({ err: err.message }, 'Raw body parser type check failed');
-        return false;
-      }
-    },
-  });
+const rawBody = express.raw({
+  inflate: true,
+  limit: '5mb',
+  type: () => true,
+});
 
-// GET /v1/fragments (list)
-router.get('/', require('./get'));
+// Import the post handler first to avoid circular dependencies
+const postFragment = require('./post');
 
-// POST /v1/fragments (create)
-router.post('/', rawBody(), require('./post'));
+// GET /v1/fragments - list fragments (with optional expand=1)
+router.get('/fragments', require('./get'));
 
-// GET /v1/fragments/:id (get by ID)
-router.get('/:id', require('./get-id'));
+// POST /v1/fragments - create fragment  
+router.post('/fragments', rawBody, postFragment);
+
+// GET /v1/fragments/:id - get fragment data
+router.get('/fragments/:id', require('./id'));
+
+// GET /v1/fragments/:id/info - get fragment metadata
+router.get('/fragments/:id/info', require('./id/info'));
+
+// GET /v1/fragments/:id.html - convert markdown to HTML
+router.get('/fragments/:id.html', require('./id/html'));
 
 logger.debug('Fragment API routes configured');
 module.exports = router;

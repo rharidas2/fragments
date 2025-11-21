@@ -1,35 +1,20 @@
-// src/index.js
-
-// Load environment variables
+// Read environment variables from an .env file (if present)
 require('dotenv').config();
 
-// Logger setup
-const logger = require('./logger'); // make sure logger.js exists in src/
+// We want to log any crash cases so we can debug later from logs.
+const logger = require('./logger');
 
-// Handle crashes
+// If we're going to crash because of an uncaught exception, log it first.
 process.on('uncaughtException', (err, origin) => {
   logger.fatal({ err, origin }, 'uncaughtException');
   throw err;
 });
 
+// If we're going to crash because of an unhandled promise rejection, log it first.
 process.on('unhandledRejection', (reason, promise) => {
   logger.fatal({ reason, promise }, 'unhandledRejection');
   throw reason;
 });
 
-// Express setup
-const express = require('express');
-const app = express();
-
-// Example route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
-
-
+// Start our server
+require('./server');

@@ -3,15 +3,13 @@ const app = require('./app');
 const logger = require('./logger');
 const stoppable = require('stoppable');
 
-// Get the port from the environment
 const port = parseInt(process.env.PORT || 8080, 10);
 
-// Create a stoppable HTTP server for graceful shutdowns
+// Listen on all network interfaces
 const server = stoppable(
-  app.listen(port, () => {
+  app.listen(port, '0.0.0.0', () => {
     logger.info(`Server started on port ${port}`);
   })
 );
 
-// Export the server for testing
 module.exports = server;
