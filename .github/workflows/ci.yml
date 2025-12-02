@@ -48,3 +48,26 @@ jobs:
       run: |
         docker tag fragments-api ${{ secrets.DOCKER_HUB_USERNAME }}/fragments-api:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/fragments-api:latest
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+      - name: Install node dependencies
+        run: npm install
+      - name: Build Containers
+        run: docker compose up -d
+      - name: Setup Local AWS Resources
+        run: ./scripts/local-aws-setup.sh
+      - name: Wait and test
+        run: |
+          sleep 10
+          curl -f http://localhost:8080/
+          echo "Basic health check passed"
