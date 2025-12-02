@@ -1,14 +1,9 @@
-# Directories to ignore
-.github/
-.vscode/
-coverage/
-node_modules/
-tests/
-.git/
-
-# Files to ignore
+node_modules
+npm-debug.log
 .env
-eslint.config.mjs
+.git
 .gitignore
-.prettier*
-jest*
+coverage
+tests/*
+!tests/.htpasswd
+*.md

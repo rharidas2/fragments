@@ -12,7 +12,6 @@
     "dev": "node --env-file=debug.env --watch ./src/index.js",
     "debug": "node --env-file=debug.env --inspect=0.0.0.0:9229 --watch ./src/index.js",
     "test:integration": "env $(cat tests/.env.test | xargs) hurl --test --glob \"tests/integration/**/*.hurl\""
-
   },
   "repository": {
     "type": "git",
@@ -31,6 +30,9 @@
     "supertest": "^7.1.4"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.940.0",
+    "@aws-sdk/client-s3": "^3.937.0",
+    "@aws-sdk/lib-dynamodb": "^3.940.0",
     "aws-jwt-verify": "^5.1.0",
     "compression": "^1.8.1",
     "cors": "^2.8.5",

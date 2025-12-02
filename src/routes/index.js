@@ -1,3 +1,4 @@
+console.log('Using routes/index.js with hostname'); 
 const express = require('express');
 const { version, author } = require('../../package.json');
 const { hostname } = require('os'); // 👈 ADD THIS
@@ -18,6 +19,8 @@ router.use('/v1', authenticate(), require('./api'));
  * Define a simple health check route. If the server is running
  * we'll respond with a 200 OK. If not, the server isn't healthy.
  */
+
+
 router.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.status(200).json({
@@ -25,7 +28,7 @@ router.get('/', (req, res) => {
     author,
     githubUrl: 'https://github.com/rharidas2/fragments',
     version,
-    hostname: hostname(), // 👈 ADD THIS
+    hostname: hostname(), 
   });
 });
 

@@ -24,8 +24,8 @@ app.use(compression());
 passport.use(authenticate.strategy());
 app.use(passport.initialize());
 
-// Routes - USE ONLY THE MAIN ROUTES
-app.use('/', require('./routes'));
+// Routes - explicitly require index.js for hostname
+app.use('/', require('./routes/index.js'));
 
 // Error handling - FIXED 404 HANDLER
 app.use((req, res) => {

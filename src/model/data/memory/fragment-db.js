@@ -1,6 +1,6 @@
 // src/model/data/memory/fragment-db.js
 const MemoryDB = require('./memory-db');
-const logger = require('../../logger');
+const logger = require('../../../logger');
 
 class FragmentDB {
   constructor() {

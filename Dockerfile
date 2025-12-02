@@ -1,39 +1,31 @@
-# Multi-stage Dockerfile for fragments node.js microservice
-# Stage 1: Builder
-FROM node:18-alpine AS builder
+FROM node:18-alpine
+
 WORKDIR /app
+
+# Copy package files
 COPY package.json package-lock.json ./
+
+# Install dependencies
 RUN npm ci --only=production
 
-# Stage 2: Runtime  
-FROM node:18-alpine AS runtime
+# First copy the tests/.htpasswd file specifically
+COPY tests/.htpasswd tests/.htpasswd
 
-# Metadata about the image
-LABEL maintainer="Rohit <rharidas2@myseneca.ca>"
-LABEL description="Fragments node.js microservice"
-
-# Environment variables
-ENV PORT=8080
-ENV NPM_CONFIG_LOGLEVEL=warn
-ENV NPM_CONFIG_COLOR=false
-
-# Use /app as our working directory
-WORKDIR /app
-
-# Copy node_modules from builder stage
-COPY --from=builder /app/node_modules ./node_modules
-
-# Copy source code
+# Then copy the rest
 COPY ./src ./src
 COPY package.json ./
 
-# Create non-root user for security
+# Verify the file was copied
+RUN ls -la tests/ && cat tests/.htpasswd
+
+# Create a non-root user
 RUN addgroup -g 1001 -S nodejs
-RUN adduser -S fragments -u 1001
+RUN adduser -S fragments -u 1001 -G nodejs
+
+# Change ownership
+RUN chown -R fragments:nodejs /app
 USER fragments
 
-# We run our service on port 8080
 EXPOSE 8080
 
-# Start the container by running our server
-CMD ["npm", "start"]
+CMD ["node", "src/index.js"]
