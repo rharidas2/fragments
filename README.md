@@ -62,3 +62,4 @@ Stop server anytime with CTRL + C.
 When debugging, you can see all environment variables with process.env. Don’t log secrets in production.
 
 I usually test in the browser first, then curl, to make sure the health route is working.
+Trigger GitHub Actions workflow
