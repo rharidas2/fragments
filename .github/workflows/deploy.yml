@@ -9,7 +9,6 @@ on:
     branches:
       - main
 
-
 env:
   AWS_REGION: us-east-1
   ECS_CLUSTER: fragment-cluster          # make sure this matches your ECS cluster name
@@ -23,54 +22,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}  # important for AWS Academy
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}  # important for AWS Academy
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build and push Docker image to ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-        IMAGE_TAG: latest                 # you can also use ${{ github.ref_name }} if you want version tags
-      run: |
-        docker buildx build --platform linux/amd64 \
-          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: latest                 # you can also use ${{ github.ref_name }} if you want version tags
+        run: |
+          docker buildx build --platform linux/amd64 \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: update-task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.TASK_DEFINITION_FILE }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
-        environment-variables: |
-          LOG_LEVEL=debug
-          NODE_ENV=production
-          AWS_REGION=${{ env.AWS_REGION }}
-          # add all the other env vars your app needs:
-          # API_URL=...
-          # AWS_S3_BUCKET_NAME=...
-          # AWS_DYNAMODB_TABLE_NAME=...
-          # AWS_COGNITO_POOL_ID=...
-          # AWS_COGNITO_CLIENT_ID=...
-
-- name: Configure AWS credentials
-  uses: aws-actions/configure-aws-credentials@v2
-  with:
-    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-    aws-region: ${{ env.AWS_REGION }}
-
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: update-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.TASK_DEFINITION_FILE }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          environment-variables: |
+            LOG_LEVEL=debug
+            NODE_ENV=production
+            AWS_REGION=${{ env.AWS_REGION }}
+            # API_URL=...
+            # AWS_S3_BUCKET_NAME=...
+            # AWS_DYNAMODB_TABLE_NAME=...
+            # AWS_COGNITO_POOL_ID=...
+            # AWS_COGNITO_CLIENT_ID=...
